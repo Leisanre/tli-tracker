@@ -1,0 +1,30 @@
+{
+  "name": "tli-tracker",
+  "productName": "Lei's TLI Tracker",
+  "version": "0.1.0",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "concurrently -k -n vite,electron \"npx vite\" \"cross-env NODE_ENV=development npx wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
+    "prove-parser": "node scripts/proveParser.js"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.2.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "electron": "^32.0.0",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.2",
+    "wait-on": "^9.1.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.113.0",
+    "better-sqlite3": "^11.0.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "ws": "^8.21.3"
+  }
+}

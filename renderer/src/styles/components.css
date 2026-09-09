@@ -1,0 +1,634 @@
+/* the jelly glass primitive — no outline. A rigid border on every panel reads as boxy
+   and kills the frosted-glass illusion; separation comes from the fill opacity itself
+   plus a soft shadow, with a faint inset top edge standing in for the "wet" highlight
+   a hard border used to fake. */
+.glass {
+  background: linear-gradient(155deg, var(--glass-fill-hi), var(--glass-fill));
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 18px 40px -14px var(--shadow-color), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Tactile hover lift for interactive glass tiles (stat cards) — a card that responds
+   to the cursor reads as a control, not just a static display. */
+.stat-tile {
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.stat-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 48px -14px var(--shadow-color), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Modal entrance — backdrop fades, panel fades + settles in from a slight scale/offset
+   instead of snapping into place. */
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes modal-panel-in {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-backdrop {
+  animation: modal-backdrop-in 150ms var(--ease);
+}
+.modal-panel {
+  animation: modal-panel-in 220ms var(--ease);
+}
+
+/* View switch — a fast fade-in on the newly mounted view instead of a hard cut. */
+@keyframes view-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.view-fade {
+  animation: view-fade-in 200ms var(--ease);
+}
+
+/* Dropdown/menu entrance — the activity banner dropdown, identify picker, etc. */
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.dropdown-in {
+  animation: dropdown-in 160ms var(--ease);
+}
+
+@keyframes drop-flash-pulse {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-tile,
+  .modal-backdrop,
+  .modal-panel,
+  .view-fade,
+  .dropdown-in,
+  .drop-flash-glow,
+  .run-table-row td,
+  .loot-row,
+  .run-row,
+  .rail-btn,
+  button {
+    animation: none !important;
+    transition: none !important;
+  }
+  .loot-row:hover,
+  .run-row:hover,
+  .run-table-row:hover td,
+  .rail-btn:hover,
+  .stat-tile:hover,
+  button:active:not(:disabled) {
+    transform: none !important;
+  }
+}
+
+/* floating jelly blobs — parallax (mouse) > breathe (pulse) > blob (orbit drift) */
+.parallax { position: fixed; z-index: 0; pointer-events: none; will-change: transform; }
+.breathe { animation: breathe 6.5s ease-in-out infinite; }
+.blob { border-radius: 50%; filter: blur(50px); background-repeat: no-repeat; }
+.blob-a {
+  width: 400px; height: 400px; animation: drift-a 22s linear infinite;
+  background-image:
+    radial-gradient(38% 38% at 32% 28%, var(--pink) 0%, transparent 72%),
+    radial-gradient(34% 34% at 68% 62%, var(--pink) 0%, transparent 68%),
+    radial-gradient(55% 55% at 50% 50%, var(--pink) 0%, transparent 82%);
+}
+.blob-b {
+  width: 340px; height: 340px; animation: drift-b 26s linear infinite;
+  background-image:
+    radial-gradient(36% 36% at 30% 65%, var(--cyan) 0%, transparent 70%),
+    radial-gradient(32% 32% at 65% 32%, var(--cyan) 0%, transparent 66%),
+    radial-gradient(52% 52% at 50% 50%, var(--cyan) 0%, transparent 80%);
+}
+.blob-c {
+  width: 250px; height: 250px; animation: drift-c 18s linear infinite;
+  background-image:
+    radial-gradient(38% 38% at 35% 35%, var(--blob-3) 0%, transparent 70%),
+    radial-gradient(34% 34% at 70% 60%, var(--blob-3) 0%, transparent 66%),
+    radial-gradient(54% 54% at 50% 50%, var(--blob-3) 0%, transparent 80%);
+}
+.blob-d {
+  width: 200px; height: 200px; animation: drift-a 30s linear infinite reverse;
+  background-image:
+    radial-gradient(40% 40% at 60% 30%, var(--pink) 0%, transparent 70%),
+    radial-gradient(36% 36% at 30% 68%, var(--pink) 0%, transparent 66%),
+    radial-gradient(55% 55% at 50% 50%, var(--pink) 0%, transparent 82%);
+}
+.pw-a .breathe { animation-delay: 0s; }
+.pw-b .breathe { animation-delay: -2s; }
+.pw-c .breathe { animation-delay: -4s; }
+.pw-d .breathe { animation-delay: -1s; }
+.pw-a { top: -90px; left: -110px; }
+.pw-b { bottom: -70px; right: -70px; }
+.pw-c { top: 38%; right: 10%; }
+.pw-d { top: 56%; left: 6%; }
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.4); opacity: 0.85; }
+}
+@keyframes drift-a {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(190px, 0); }
+  50% { transform: translate(190px, 190px); }
+  75% { transform: translate(0, 190px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes drift-b {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-160px, 0); }
+  50% { transform: translate(-160px, -160px); }
+  75% { transform: translate(0, -160px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes drift-c {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blob, .breathe { animation: none; opacity: 0.45; }
+  .parallax { transform: none !important; }
+}
+
+.grain {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dust-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.dust { position: absolute; border-radius: 50%; background: var(--fg-primary); opacity: 0; animation: dust-drift linear infinite; }
+@keyframes dust-drift {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: var(--dust-op, 0.5); }
+  92% { opacity: var(--dust-op, 0.5); }
+  100% { transform: translate(var(--dust-dx, 60px), var(--dust-dy, -420px)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .dust { animation: none; opacity: 0; } }
+
+.constellation { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; width: 46vw; max-width: 640px; height: 100vh; opacity: 0.85; will-change: transform; }
+.constellation-corner { top: auto; left: auto; bottom: 0; right: 0; width: 22vw; max-width: 300px; height: 45vh; }
+.constellation .c-line { stroke: var(--constellation-line, rgba(160, 180, 255, 0.35)); stroke-width: 1; fill: none; filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3)); }
+.constellation .c-star { fill: var(--constellation-glow, #9fc3ff); filter: drop-shadow(0 0 4px var(--constellation-glow, #9fc3ff)); }
+.constellation .c-pulse { animation: c-twinkle 4.5s ease-in-out infinite; }
+.constellation .c-pulse:nth-child(2n) { animation-delay: -1.5s; }
+.constellation .c-pulse:nth-child(3n) { animation-delay: -3s; }
+@keyframes c-twinkle { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .c-pulse { animation: none; opacity: 0.8; } }
+
+/* Icon rail — collapses to a slimmer strip on narrow windows so it stops eating
+   into the dashboard grid instead of staying a fixed 80px regardless of width. */
+.icon-rail {
+  width: 80px;
+}
+.rail-btn {
+  height: 44px;
+  width: 44px;
+  transition: background 180ms var(--ease), color 180ms var(--ease), transform 180ms var(--ease);
+}
+.rail-btn:hover {
+  transform: scale(1.08);
+}
+@media (max-width: 1100px) {
+  .icon-rail {
+    width: 60px;
+  }
+  .rail-btn {
+    height: 36px;
+    width: 36px;
+  }
+}
+
+/* Status bar — the HUD strip */
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-header {
+  padding: 14px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--fg-primary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.wordmark {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+}
+
+.watch-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 600;
+  color: var(--fg-secondary);
+}
+.ember-pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+  position: relative;
+}
+.ember-pulse.live {
+  background: var(--ember);
+  box-shadow: 0 0 0 0 var(--ember-glow);
+  animation: ember-pulse 1.8s ease-out infinite;
+}
+@keyframes ember-pulse {
+  0% { box-shadow: 0 0 0 0 var(--ember-glow); }
+  70% { box-shadow: 0 0 0 8px rgba(255, 122, 51, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 122, 51, 0); }
+}
+
+.divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+}
+
+.statusbar-map {
+  color: var(--fg-primary);
+  font-weight: 600;
+}
+.statusbar-map .timer {
+  color: var(--fg-tertiary);
+  font-weight: 400;
+  margin-left: var(--sp-2);
+}
+
+/* Stat card row — prominent summary strip below the status bar */
+.stat-cards {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+}
+.stat-card {
+  position: relative;
+  flex: 1;
+  padding: var(--sp-3);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--pink);
+}
+.stat-card-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.stat-card-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--fg-primary);
+}
+
+.statusbar-stats {
+  margin-left: auto;
+  display: flex;
+  gap: var(--sp-5);
+}
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.3;
+}
+.stat-block .label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+}
+.stat-block .value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+
+/* Auto-detect banner */
+.autodetect-banner {
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+  color: var(--fg-tertiary);
+  font-size: 12px;
+}
+
+/* Layout */
+.app-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Loot panel */
+.loot-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.loot-toolbar button {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+.loot-toolbar input,
+.loot-toolbar select {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+.tab-group {
+  display: flex;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+.tab-group button {
+  background: transparent;
+  border: none;
+  padding: 5px 12px;
+}
+.tab-group button[data-active="true"] {
+  background: var(--pink);
+  color: #0a0d12;
+  font-weight: 600;
+}
+.tab-group button:disabled {
+  background: var(--pink);
+  color: #0a0d12;
+  border: none;
+  font-weight: 600;
+}
+
+.loot-empty {
+  padding: 16px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--fg-muted);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+}
+
+.loot-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.loot-head-row th {
+  text-align: left;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: var(--fg-muted);
+  border-bottom: 1px solid var(--border);
+}
+.loot-head-row th.mono {
+  text-align: right;
+}
+.loot-row {
+  border-bottom: 1px solid var(--border-subtle);
+  border-left: 3px solid transparent;
+  transition: background 200ms var(--ease), border-left-color 150ms var(--ease), transform 200ms var(--ease);
+}
+.loot-row:hover {
+  background: var(--bg-1);
+  transform: translateX(2px);
+}
+.loot-row.flash {
+  background: var(--ember-glow);
+}
+.loot-row td {
+  padding: 14px var(--sp-3);
+}
+.loot-row .name {
+  color: var(--fg-primary);
+  font-weight: 500;
+}
+.loot-row .type {
+  font-size: 11px;
+  color: var(--fg-primary);
+  opacity: 0.72;
+  font-weight: 500;
+}
+.loot-row .qty {
+  text-align: right;
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+
+/* Run sidebar */
+.run-sidebar {
+  width: 240px;
+  padding: var(--sp-4);
+  background: var(--bg-1);
+  border-left: 1px solid var(--border);
+}
+.run-sidebar h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  margin: 0 0 var(--sp-4) 0;
+  font-weight: 600;
+}
+.run-field {
+  margin-bottom: var(--sp-3);
+}
+.run-field .label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
+  margin-bottom: 2px;
+}
+.run-field .value {
+  font-size: 14px;
+  color: var(--fg-primary);
+  font-weight: 500;
+}
+.run-empty {
+  color: var(--fg-muted);
+  font-size: 12px;
+}
+
+.run-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 200ms var(--ease), transform 200ms var(--ease);
+}
+.run-row:hover {
+  background: var(--bg-1);
+  transform: translateX(2px);
+}
+.run-row[data-selected="true"] {
+  background: var(--bg-2);
+}
+
+/* Map Log — a real table (matches the density/legibility of a spreadsheet-style
+   tracker) instead of a stacked list; the app's primary live view gets real space. */
+.run-table {
+  width: 100%;
+  table-layout: fixed;
+}
+.run-table th {
+  white-space: nowrap;
+}
+.run-table th.mono,
+.run-table td.mono {
+  text-align: right;
+}
+.run-table-row {
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 200ms var(--ease);
+}
+.run-table-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
+.run-table-row td {
+  padding: 18px 16px;
+  transition: transform 200ms var(--ease);
+}
+.run-table-row:hover td {
+  transform: translateX(3px);
+}
+.run-table-row:hover {
+  background: var(--bg-1);
+}
+.run-table-row[data-selected='true'] {
+  background: var(--bg-2);
+}
+.run-table-row[data-live='true'] {
+  background: linear-gradient(90deg, var(--ember-glow), transparent 70%);
+}
+.run-table-num {
+  font-size: 13px;
+  color: var(--fg-tertiary);
+}
+.run-table-num.run-table-profit {
+  font-size: 15px;
+  font-weight: 800;
+}
+.run-roi {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+.run-table-topdrop {
+  font-size: 13px;
+  color: var(--fg-secondary);
+  max-width: 220px;
+}
+.run-count-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--bg-3);
+  color: var(--fg-tertiary);
+}
+.roi-pos {
+  color: var(--success);
+}
+.roi-neg {
+  color: var(--danger);
+}
+
+/* Activity announcement strip — a one-line banner (latest event), not a tall always-open
+   list, so it calls out "something just dropped" without eating vertical space that the
+   Map Log needs. Click to drop down recent history as an overlay, not pushed layout. */
+.activity-strip {
+  margin: 0 var(--sp-6) 8px;
+}
+.activity-banner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  border-radius: var(--radius-md);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border-dim);
+  backdrop-filter: blur(18px);
+  color: var(--fg-secondary);
+  font-size: 12.5px;
+  text-align: left;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+.activity-banner.flash {
+  background: var(--ember-glow);
+  border-color: var(--pink);
+}
+.activity-banner-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.activity-banner-chevron {
+  color: var(--fg-muted);
+  font-size: 10px;
+}
+.activity-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 18px 40px -14px var(--shadow-color);
+}
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--fg-secondary);
+}
+.activity-item:hover {
+  background: var(--bg-1);
+}

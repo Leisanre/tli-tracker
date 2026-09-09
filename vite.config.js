@@ -1,0 +1,15 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  root: 'renderer',
+  plugins: [react(), tailwindcss()],
+  base: './',
+  server: {
+    fs: { allow: ['..'] },
+  },
+  build: {
+    outDir: 'dist',
+  },
+});

@@ -1,0 +1,7 @@
+node_modules/
+renderer/dist/
+scratch/
+Pics for claude/
+.claude/
+.env
+*.log
